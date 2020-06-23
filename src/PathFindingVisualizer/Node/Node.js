@@ -13,10 +13,10 @@ class Node extends React.Component {
 
   render() {
     // const { isStart, isFinish } = this.props;
-    console.log(this.isStart);
-    const colorName = this.isFinish
+    // console.log(this.state.isStart);
+    const colorName = this.state.isFinish
       ? "node-finish"
-      : this.isStart
+      : this.state.isStart
       ? "node-start"
       : "";
     return <div className={`node ${colorName}`}></div>;
