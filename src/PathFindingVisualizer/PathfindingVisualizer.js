@@ -1,44 +1,60 @@
 import React from "react";
 import Node from "./Node/Node";
+import { dijkstras } from "../algorithms/dijkstra";
 import "./PathfindingVisualizer.css";
+
+const START_ROW = 10;
+const START_COL = 5;
+const FINISH_ROW = 10;
+const FINISH_COL = 34;
 
 class PathfindingVisualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      nodes: [],
+      grid: [],
+      test: true,
     };
   }
 
   componentDidMount() {
-    const nodes = [];
+    this.initializeGrid();
+  }
+
+  initializeGrid() {
+    const grid = [];
     for (var rows = 0; rows < 20; rows++) {
       const row = [];
-      for (var cols = 0; cols < 50; cols++) {
-        const currNode = {
-          cols,
-          rows,
-          isStart: rows === 10 && cols === 5,
-          isFinish: rows === 10 && cols === 45,
-        };
-        row.push(currNode);
+      for (var cols = 0; cols < 40; cols++) {
+        row.push(createNode(rows, cols));
       }
-      nodes.push(row);
+      grid.push(row);
     }
-    this.setState({ nodes: nodes });
+    this.setState({ grid: grid });
+  }
+
+  visualizeDijkstras() {
+    const { grid } = this.state;
+    dijkstras(grid, grid[START_ROW][START_COL], grid[FINISH_ROW][FINISH_COL]);
   }
 
   render() {
     return (
       <div className="grid">
-        {this.state.nodes.map((row, rowIdx) => {
+        <button onClick={() => this.visualizeDijkstras()}>
+          Visualize Dijkstras Algorithm
+        </button>
+        {this.state.grid.map((row, rowIdx) => {
           return (
             <div key={rowIdx}>
-              {row.map((col, colIdx) => {
-                const { isStart, isFinish } = col;
+              {row.map((node, nodeIdx) => {
+                const { col, row, isWall, isStart, isFinish } = node;
                 return (
                   <Node
-                    key={colIdx}
+                    key={nodeIdx}
+                    col={col}
+                    row={row}
+                    isWall={isWall}
                     isStart={isStart}
                     isFinish={isFinish}
                   ></Node>
@@ -51,5 +67,18 @@ class PathfindingVisualizer extends React.Component {
     );
   }
 }
+
+const createNode = (row, col) => {
+  return {
+    col,
+    row,
+    isStart: row === START_ROW && col === START_COL,
+    isFinish: row === FINISH_ROW && col === FINISH_COL,
+    distance: Infinity,
+    isVisited: false,
+    isWall: false,
+    previousNode: null,
+  };
+};
 
 export default PathfindingVisualizer;
