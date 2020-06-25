@@ -35,7 +35,20 @@ class PathfindingVisualizer extends React.Component {
 
   visualizeDijkstras() {
     const { grid } = this.state;
-    dijkstras(grid, grid[START_ROW][START_COL], grid[FINISH_ROW][FINISH_COL]);
+    const nodeOrder = dijkstras(
+      grid,
+      grid[START_ROW][START_COL],
+      grid[FINISH_ROW][FINISH_COL]
+    );
+    console.log(nodeOrder);
+    for (let i = 0; i < nodeOrder.length; i++) {
+      setTimeout(() => {
+        const node = nodeOrder[i];
+        const newGrid = this.state.grid.slice();
+        newGrid[node.row][node.col].isVisited = true;
+        this.setState({ grid: newGrid });
+      }, 100 * i);
+    }
   }
 
   render() {
@@ -48,7 +61,7 @@ class PathfindingVisualizer extends React.Component {
           return (
             <div key={rowIdx}>
               {row.map((node, nodeIdx) => {
-                const { col, row, isWall, isStart, isFinish } = node;
+                const { col, row, isWall, isStart, isFinish, isVisited } = node;
                 return (
                   <Node
                     key={nodeIdx}
@@ -57,6 +70,7 @@ class PathfindingVisualizer extends React.Component {
                     isWall={isWall}
                     isStart={isStart}
                     isFinish={isFinish}
+                    isVisited={isVisited}
                   ></Node>
                 );
               })}

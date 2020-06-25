@@ -5,20 +5,20 @@ import "./Node.css";
 class Node extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isStart: this.props.isStart,
-      isFinish: this.props.isFinish,
-    };
+    this.state = {};
   }
 
   render() {
-    // const { isStart, isFinish } = this.props;
-    // console.log(this.state.isStart);
-    const colorName = this.state.isFinish
+    const { isStart, isFinish, isVisited } = this.props;
+    // console.log(this.state.isVisited);
+    const colorName = isFinish
       ? "node-finish"
-      : this.state.isStart
+      : isStart
       ? "node-start"
+      : isVisited
+      ? "node-visited"
       : "";
+
     return <div className={`node ${colorName}`}></div>;
   }
 }

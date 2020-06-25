@@ -99,15 +99,55 @@ class Heap {
   }
 }
 
-export const dijkstras = (grid) => {
+export const dijkstras = (grid, startNode, finishNode) => {
   const heap = new Heap(grid);
   const size = grid.length * grid[0].length;
   heap.size = size;
-  grid[0][0].distance = 0;
-  heap.decreaseKey(grid[0][4], 10);
-  console.log(heap.array);
-  console.log(grid);
-  console.log(heap.extractMin());
-  console.log(heap.extractMin());
-  console.log(heap.isInMinHeap(grid[10][10]));
+  var nodeOrder = [];
+
+  heap.decreaseKey(startNode, 0);
+  // nodeOrder.push(startNode);
+
+  while (!heap.isEmpty()) {
+    var min = heap.extractMin();
+    var neighbours = getNeighbors(min, grid);
+    for (const neighbour of neighbours) {
+      if (
+        heap.isInMinHeap(neighbour) &&
+        min.distance !== Infinity &&
+        neighbour.distance > min.distance + 1
+      ) {
+        heap.decreaseKey(neighbour, min.distance + 1);
+        neighbour.previousNode = min;
+
+        if (
+          neighbour.col === finishNode.col &&
+          neighbour.row === finishNode.row
+        ) {
+          return nodeOrder;
+        }
+        nodeOrder.push(neighbour);
+      }
+    }
+  }
+
+  return nodeOrder;
 };
+
+function getNeighbors(node, grid) {
+  const neighbours = [];
+  const { row, col } = node;
+  if (row > 0) {
+    neighbours.push(grid[row - 1][col]);
+  }
+  if (row < grid.length - 1) {
+    neighbours.push(grid[row + 1][col]);
+  }
+  if (col > 0) {
+    neighbours.push(grid[row][col - 1]);
+  }
+  if (col < grid[0].length - 1) {
+    neighbours.push(grid[row][col + 1]);
+  }
+  return neighbours;
+}
