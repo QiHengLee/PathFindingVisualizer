@@ -119,14 +119,13 @@ export const dijkstras = (grid, startNode, finishNode) => {
       ) {
         heap.decreaseKey(neighbour, min.distance + 1);
         neighbour.previousNode = min;
-
+        nodeOrder.push(neighbour);
         if (
           neighbour.col === finishNode.col &&
           neighbour.row === finishNode.row
         ) {
           return nodeOrder;
         }
-        nodeOrder.push(neighbour);
       }
     }
   }
@@ -140,14 +139,15 @@ function getNeighbors(node, grid) {
   if (row > 0) {
     neighbours.push(grid[row - 1][col]);
   }
+  if (col < grid[0].length - 1) {
+    neighbours.push(grid[row][col + 1]);
+  }
   if (row < grid.length - 1) {
     neighbours.push(grid[row + 1][col]);
   }
   if (col > 0) {
     neighbours.push(grid[row][col - 1]);
   }
-  if (col < grid[0].length - 1) {
-    neighbours.push(grid[row][col + 1]);
-  }
+
   return neighbours;
 }

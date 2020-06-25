@@ -9,12 +9,14 @@ class Node extends React.Component {
   }
 
   render() {
-    const { isStart, isFinish, isVisited } = this.props;
+    const { isStart, isFinish, isVisited, isPath } = this.props;
     // console.log(this.state.isVisited);
     const colorName = isFinish
       ? "node-finish"
       : isStart
       ? "node-start"
+      : isPath
+      ? "node-path"
       : isVisited
       ? "node-visited"
       : "";

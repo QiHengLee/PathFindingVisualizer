@@ -40,16 +40,46 @@ class PathfindingVisualizer extends React.Component {
       grid[START_ROW][START_COL],
       grid[FINISH_ROW][FINISH_COL]
     );
-    console.log(nodeOrder);
-    for (let i = 0; i < nodeOrder.length; i++) {
+    this.animateMap(nodeOrder);
+    // this.animatePath(nodeOrder);
+  }
+
+  testing() {
+    setTimeout(() => {
+      console.log("haha");
+    }, 100000);
+  }
+
+  animateMap = (nodeOrder) => {
+    for (let i = 0; i <= nodeOrder.length; i++) {
+      if (i === nodeOrder.length) {
+        setTimeout(() => {
+          this.animatePath(nodeOrder);
+        }, 50 * i);
+        return;
+      }
       setTimeout(() => {
         const node = nodeOrder[i];
         const newGrid = this.state.grid.slice();
         newGrid[node.row][node.col].isVisited = true;
         this.setState({ grid: newGrid });
-      }, 100 * i);
+      }, 50 * i);
     }
-  }
+  };
+
+  animatePath = (nodeOrder) => {
+    var finishNode = nodeOrder[nodeOrder.length - 1];
+    while (true) {
+      const node = finishNode.previousNode;
+      const newGrid = this.state.grid.slice();
+      newGrid[node.row][node.col].isPath = true;
+      if (node.row === START_ROW && node.col === START_COL) {
+        break;
+      }
+      finishNode = node;
+      this.setState({ grid: newGrid });
+    }
+  };
 
   render() {
     return (
@@ -61,7 +91,15 @@ class PathfindingVisualizer extends React.Component {
           return (
             <div key={rowIdx}>
               {row.map((node, nodeIdx) => {
-                const { col, row, isWall, isStart, isFinish, isVisited } = node;
+                const {
+                  col,
+                  row,
+                  isWall,
+                  isStart,
+                  isFinish,
+                  isVisited,
+                  isPath,
+                } = node;
                 return (
                   <Node
                     key={nodeIdx}
@@ -71,6 +109,7 @@ class PathfindingVisualizer extends React.Component {
                     isStart={isStart}
                     isFinish={isFinish}
                     isVisited={isVisited}
+                    isPath={isPath}
                   ></Node>
                 );
               })}
@@ -93,6 +132,7 @@ const createNode = (row, col) => {
     isWall: false,
     previousNode: null,
     minHeapPos: 0,
+    isPath: false,
   };
 };
 
