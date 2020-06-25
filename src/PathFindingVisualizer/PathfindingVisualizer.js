@@ -78,6 +78,7 @@ const createNode = (row, col) => {
     isVisited: false,
     isWall: false,
     previousNode: null,
+    minHeapPos: 0,
   };
 };
 
