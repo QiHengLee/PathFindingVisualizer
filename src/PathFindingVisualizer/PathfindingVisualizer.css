@@ -1,8 +1,8 @@
 .grid {
   text-align: center;
-  padding-top: 60px;
+  padding-top: 100px 0 0;
 }
 
-.grid button {
+/* .grid button {
   margin-bottom: 10px;
-}
+} */

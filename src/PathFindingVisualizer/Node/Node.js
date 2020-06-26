@@ -9,19 +9,39 @@ class Node extends React.Component {
   }
 
   render() {
-    const { isStart, isFinish, isVisited, isPath } = this.props;
+    const {
+      row,
+      col,
+      isStart,
+      isFinish,
+      isVisited,
+      isPath,
+      isWall,
+      onMouseDown,
+      onMouseUp,
+      onMouseEnter,
+    } = this.props;
     // console.log(this.state.isVisited);
     const colorName = isFinish
       ? "node-finish"
       : isStart
       ? "node-start"
+      : isWall
+      ? "node-wall"
       : isPath
       ? "node-path"
       : isVisited
       ? "node-visited"
       : "";
 
-    return <div className={`node ${colorName}`}></div>;
+    return (
+      <div
+        className={`node ${colorName}`}
+        onMouseDown={() => onMouseDown(row, col)}
+        onMouseUp={() => onMouseUp()}
+        onMouseEnter={() => onMouseEnter(row, col)}
+      ></div>
+    );
   }
 }
 

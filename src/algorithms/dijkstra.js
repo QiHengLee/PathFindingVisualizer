@@ -115,7 +115,7 @@ export const dijkstras = (grid, startNode, finishNode) => {
       if (
         heap.isInMinHeap(neighbour) &&
         min.distance !== Infinity &&
-        neighbour.distance > min.distance + 1
+        neighbour.distance > min.distance + 1 && neighbour.isWall === false
       ) {
         heap.decreaseKey(neighbour, min.distance + 1);
         neighbour.previousNode = min;

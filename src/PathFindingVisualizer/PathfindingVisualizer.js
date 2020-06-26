@@ -6,14 +6,14 @@ import "./PathfindingVisualizer.css";
 const START_ROW = 10;
 const START_COL = 5;
 const FINISH_ROW = 10;
-const FINISH_COL = 34;
+const FINISH_COL = 44;
 
 class PathfindingVisualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       grid: [],
-      test: true,
+      mouseIsPressed: false,
     };
   }
 
@@ -25,7 +25,7 @@ class PathfindingVisualizer extends React.Component {
     const grid = [];
     for (var rows = 0; rows < 20; rows++) {
       const row = [];
-      for (var cols = 0; cols < 40; cols++) {
+      for (var cols = 0; cols < 50; cols++) {
         row.push(createNode(rows, cols));
       }
       grid.push(row);
@@ -41,13 +41,6 @@ class PathfindingVisualizer extends React.Component {
       grid[FINISH_ROW][FINISH_COL]
     );
     this.animateMap(nodeOrder);
-    // this.animatePath(nodeOrder);
-  }
-
-  testing() {
-    setTimeout(() => {
-      console.log("haha");
-    }, 100000);
   }
 
   animateMap = (nodeOrder) => {
@@ -55,7 +48,7 @@ class PathfindingVisualizer extends React.Component {
       if (i === nodeOrder.length) {
         setTimeout(() => {
           this.animatePath(nodeOrder);
-        }, 50 * i);
+        }, 25 * i);
         return;
       }
       setTimeout(() => {
@@ -63,7 +56,7 @@ class PathfindingVisualizer extends React.Component {
         const newGrid = this.state.grid.slice();
         newGrid[node.row][node.col].isVisited = true;
         this.setState({ grid: newGrid });
-      }, 50 * i);
+      }, 25 * i);
     }
   };
 
@@ -81,42 +74,63 @@ class PathfindingVisualizer extends React.Component {
     }
   };
 
+  handleMouseDown(row, col) {
+    const newGrid = wallToggled(this.state.grid, row, col);
+    this.setState({ grid: newGrid, mouseIsPressed: true });
+  }
+
+  handleMouseUp() {
+    this.setState({ mouseIsPressed: false });
+  }
+
+  handleMouseEnter(row, col) {
+    if (this.state.mouseIsPressed) {
+      const newGrid = wallToggled(this.state.grid, row, col);
+      this.setState({ grid: newGrid, mouseIsPressed: true });
+    }
+  }
+
   render() {
     return (
-      <div className="grid">
+      <>
         <button onClick={() => this.visualizeDijkstras()}>
           Visualize Dijkstras Algorithm
         </button>
-        {this.state.grid.map((row, rowIdx) => {
-          return (
-            <div key={rowIdx}>
-              {row.map((node, nodeIdx) => {
-                const {
-                  col,
-                  row,
-                  isWall,
-                  isStart,
-                  isFinish,
-                  isVisited,
-                  isPath,
-                } = node;
-                return (
-                  <Node
-                    key={nodeIdx}
-                    col={col}
-                    row={row}
-                    isWall={isWall}
-                    isStart={isStart}
-                    isFinish={isFinish}
-                    isVisited={isVisited}
-                    isPath={isPath}
-                  ></Node>
-                );
-              })}
-            </div>
-          );
-        })}
-      </div>
+        <div className="grid">
+          {this.state.grid.map((row, rowIdx) => {
+            return (
+              <div key={rowIdx}>
+                {row.map((node, nodeIdx) => {
+                  const {
+                    col,
+                    row,
+                    isWall,
+                    isStart,
+                    isFinish,
+                    isVisited,
+                    isPath,
+                  } = node;
+                  return (
+                    <Node
+                      key={nodeIdx}
+                      col={col}
+                      row={row}
+                      isWall={isWall}
+                      isStart={isStart}
+                      isFinish={isFinish}
+                      isVisited={isVisited}
+                      isPath={isPath}
+                      onMouseDown={this.handleMouseDown.bind(this)}
+                      onMouseUp={this.handleMouseUp.bind(this)}
+                      onMouseEnter={this.handleMouseEnter.bind(this)}
+                    ></Node>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </>
     );
   }
 }
@@ -135,5 +149,11 @@ const createNode = (row, col) => {
     isPath: false,
   };
 };
+
+function wallToggled(grid, row, col) {
+  var val = grid[row][col].isWall;
+  grid[row][col].isWall = !val;
+  return grid;
+}
 
 export default PathfindingVisualizer;
