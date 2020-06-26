@@ -36,6 +36,7 @@ class Node extends React.Component {
 
     return (
       <div
+        id={`node-${row}-${col}`}
         className={`node ${colorName}`}
         onMouseDown={() => onMouseDown(row, col)}
         onMouseUp={() => onMouseUp()}
