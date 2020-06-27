@@ -2,11 +2,16 @@ import React from "react";
 import Node from "./Node/Node";
 import { dijkstras } from "../algorithms/dijkstra";
 import "./PathfindingVisualizer.css";
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
+import Button from 'react-bootstrap/Button'
+import NavDropdown from 'react-bootstrap/NavDropdown'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const START_ROW = Math.floor((window.innerHeight)/30 / 2);
-const START_COL = Math.floor((window.innerWidth)/30 / 4);
-const FINISH_ROW = Math.floor((window.innerHeight)/30/2);
-const FINISH_COL = Math.floor((window.innerWidth)/30/4*3);
+// const START_ROW = Math.floor((window.innerHeight)/34/2);
+// const START_COL = Math.floor((window.innerWidth)/25/4);
+// const FINISH_ROW = Math.floor((window.innerHeight)/34/2);
+// const FINISH_COL = Math.floor((window.innerWidth)/25/4*3);
 
 class PathfindingVisualizer extends React.Component {
   constructor(props) {
@@ -14,8 +19,14 @@ class PathfindingVisualizer extends React.Component {
     this.state = {
       grid: [],
       mouseIsPressed: false,
-      width: Math.floor((window.innerWidth)/30),
-      height: Math.floor((window.innerHeight)/30),
+      startIsPressed: false,
+      finishIsPressed: false,
+      start_row : Math.floor((window.innerHeight)/34/2),
+      start_col : Math.floor((window.innerWidth)/25/4),
+      finish_row : Math.floor((window.innerHeight)/34/2),
+      finish_col : Math.floor((window.innerWidth)/25/4*3),
+      width: Math.floor((window.innerWidth)/25),
+      height: Math.floor((window.innerHeight)/34),
     };
   }
 
@@ -25,12 +36,19 @@ class PathfindingVisualizer extends React.Component {
 
   initializeGrid() {
     const grid = [];
-    console.log(window.innerHeight);
-    console.log(window.innerWidth)
+
     for (var rows = 0; rows < this.state.height; rows++) {
       const row = [];
       for (var cols = 0; cols < this.state.width; cols++) {
-        row.push(createNode(rows, cols));
+        if (rows === this.state.start_row && cols === this.state.start_col) {
+          row.push(createNode(rows, cols, true, false));
+        }
+        else if (rows === this.state.finish_row && cols === this.state.finish_col) {
+          row.push(createNode(rows, cols, false, true));
+        }
+        else {
+          row.push(createNode(rows, cols, false, false));
+        }
       }
       grid.push(row);
     }
@@ -41,8 +59,8 @@ class PathfindingVisualizer extends React.Component {
     const { grid } = this.state;
     const nodeOrder = dijkstras(
       grid,
-      grid[START_ROW][START_COL],
-      grid[FINISH_ROW][FINISH_COL]
+      grid[this.state.start_row][this.state.start_col],
+      grid[this.state.finish_row][this.state.finish_col]
     );
     this.animateMap(nodeOrder);
   }
@@ -71,7 +89,7 @@ class PathfindingVisualizer extends React.Component {
     var finishNode = nodeOrder[nodeOrder.length-1].previousNode;
     var path = [];
     while(true) {
-      if (finishNode.row === START_ROW && finishNode.col === START_COL) {
+      if (finishNode.row === this.state.start_row && finishNode.col === this.state.start_col) {
           break;
       }
       path.push(finishNode);
@@ -90,16 +108,44 @@ class PathfindingVisualizer extends React.Component {
   };
 
   handleMouseDown(row, col) {
-    const newGrid = wallToggled(this.state.grid, row, col);
-    this.setState({ grid: newGrid, mouseIsPressed: true });
+    if (this.state.grid[row][col].isStart) {
+      const newGrid = this.state.grid.slice();
+      newGrid[this.state.start_row][this.state.start_col].isStart = false;
+      newGrid[row][col].isStart = true;
+      this.setState({grid: newGrid, startIsPressed: true, start_col : col, start_row: row });  
+    }
+    else if (this.state.grid[row][col].isFinish) {
+      const newGrid = this.state.grid.slice();
+      newGrid[this.state.finish_row][this.state.finish_col].isFinish = false;
+      newGrid[row][col].isFinish = true;
+      this.setState({grid: newGrid, finishIsPressed: true, finish_col : col, finish_row: row });  
+    }
+    else {
+      const newGrid = wallToggled(this.state.grid, row, col);
+      this.setState({ grid: newGrid, mouseIsPressed: true });  
+    }
   }
 
   handleMouseUp() {
+    this.setState({ startIsPressed: false });
     this.setState({ mouseIsPressed: false });
+    this.setState({ finishIsPressed: false });
   }
 
   handleMouseEnter(row, col) {
-    if (this.state.mouseIsPressed) {
+    if (this.state.startIsPressed) {
+      const newGrid = this.state.grid.slice();
+      newGrid[this.state.start_row][this.state.start_col].isStart = false;
+      newGrid[row][col].isStart = true;
+      this.setState({grid: newGrid, startIsPressed: true, start_col : col, start_row: row });  
+    }
+    else if (this.state.finishIsPressed) {
+      const newGrid = this.state.grid.slice();
+      newGrid[this.state.finish_row][this.state.finish_col].isFinish = false;
+      newGrid[row][col].isFinish = true;
+      this.setState({grid: newGrid, finishIsPressed: true, finish_col : col, finish_row: row });  
+    }
+    else if (this.state.mouseIsPressed) {
       const newGrid = wallToggled(this.state.grid, row, col);
       this.setState({ grid: newGrid, mouseIsPressed: true });
     }
@@ -108,54 +154,75 @@ class PathfindingVisualizer extends React.Component {
   render() {
     return (
       <>
-        <button onClick={() => this.visualizeDijkstras()}>
-          Visualize Dijkstras Algorithm
-        </button>
-        <div className="grid">
-          {this.state.grid.map((row, rowIdx) => {
-            return (
-              <div key={rowIdx}>
-                {row.map((node, nodeIdx) => {
-                  const {
-                    col,
-                    row,
-                    isWall,
-                    isStart,
-                    isFinish,
-                    isVisited,
-                    isPath,
-                  } = node;
-                  return (
-                    <Node
-                      key={nodeIdx}
-                      col={col}
-                      row={row}
-                      isWall={isWall}
-                      isStart={isStart}
-                      isFinish={isFinish}
-                      isVisited={isVisited}
-                      isPath={isPath}
-                      onMouseDown={this.handleMouseDown.bind(this)}
-                      onMouseUp={this.handleMouseUp.bind(this)}
-                      onMouseEnter={this.handleMouseEnter.bind(this)}
-                    ></Node>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
+      <Navbar bg="light">
+        <Navbar.Brand>Pathfinding Visualizer</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            <NavDropdown title="Algorithms" id="basic-nav-dropdown">
+              <NavDropdown.Item>Dijkstra's Algorithm</NavDropdown.Item>
+              <NavDropdown.Item>A* Algorithm</NavDropdown.Item>
+              <NavDropdown.Item>Depth First Search</NavDropdown.Item>
+              <NavDropdown.Item>Breadth First Search</NavDropdown.Item>
+            </NavDropdown>
+            <NavDropdown title="Speed" id="basic-nav-dropdown">
+              <NavDropdown.Item>Slow</NavDropdown.Item>
+              <NavDropdown.Item>Medium</NavDropdown.Item>
+              <NavDropdown.Item>Fast</NavDropdown.Item>
+            </NavDropdown>
+            <Nav.Link>Clear Nodes</Nav.Link>      
+            <Button onClick={() => this.visualizeDijkstras()} variant="outline-success">Visualize Algorithm</Button>{' '}
+          </Nav>
+          {/* <Nav className="mr-auto">
+          
+          </Nav> */}
+        </Navbar.Collapse>
+      </Navbar>
+      <div className="grid">
+        {this.state.grid.map((row, rowIdx) => {
+          return (
+            <div key={rowIdx}>
+              {row.map((node, nodeIdx) => {
+                const {
+                  col,
+                  row,
+                  isWall,
+                  isStart,
+                  isFinish,
+                  isVisited,
+                  isPath,
+                } = node;
+                return (
+                  <Node
+                    key={nodeIdx}
+                    col={col}
+                    row={row}
+                    isWall={isWall}
+                    isStart={isStart}
+                    isFinish={isFinish}
+                    isVisited={isVisited}
+                    isPath={isPath}
+                    onMouseDown={this.handleMouseDown.bind(this)}
+                    onMouseUp={this.handleMouseUp.bind(this)}
+                    onMouseEnter={this.handleMouseEnter.bind(this)}
+                  ></Node>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
       </>
     );
   }
 }
 
-const createNode = (row, col) => {
+const createNode = (row, col, isStart, isFinish) => {
   return {
     col,
     row,
-    isStart: row === START_ROW && col === START_COL,
-    isFinish: row === FINISH_ROW && col === FINISH_COL,
+    isStart,
+    isFinish,
     distance: Infinity,
     isVisited: false,
     isWall: false,
@@ -170,5 +237,10 @@ function wallToggled(grid, row, col) {
   grid[row][col].isWall = !val;
   return grid;
 }
+
+// function startToggled(grid, row, col) {
+//   grid[row][col].isStart = false;
+//   return grid;
+// }
 
 export default PathfindingVisualizer;
