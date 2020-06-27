@@ -40,10 +40,10 @@ class PathfindingVisualizer extends React.Component {
   }
 
   componentDidMount() {
-    this.initializeGrid();
+    this.initializeGrid(true);
   }
 
-  initializeGrid() {
+  initializeGrid(clearAll) {
     const grid = [];
     for (var rows = 0; rows < this.state.height; rows++) {
       const row = [];
@@ -56,9 +56,19 @@ class PathfindingVisualizer extends React.Component {
         }
         else {
           if (document.getElementById(`node-${rows}-${cols}`)) {
-            document.getElementById(`node-${rows}-${cols}`).className="node"
+            if(document.getElementById(`node-${rows}-${cols}`).className === "node node-wall" && !clearAll) {
+              row.push(createNode(rows, cols, false, false));
+              row[row.length-1].isWall = true
+            }
+            else {
+              document.getElementById(`node-${rows}-${cols}`).className="node"
+              row.push(createNode(rows, cols, false, false));
+            }
           }
-          row.push(createNode(rows, cols, false, false));
+          else {
+            row.push(createNode(rows, cols, false, false));
+          }
+          
         }
       }
       grid.push(row);
@@ -105,7 +115,7 @@ class PathfindingVisualizer extends React.Component {
       alert("Visualization in progress")
       return
     }
-    this.initializeGrid()
+    this.initializeGrid(false)
     this.setState({
       progress: false
     }, () => {
@@ -229,7 +239,7 @@ class PathfindingVisualizer extends React.Component {
       finish_row : Math.floor((window.innerHeight)/34/2),
       finish_col : Math.floor((window.innerWidth)/25/4*3),
     }, () => {
-      this.initializeGrid();
+      this.initializeGrid(true);
     })
   }
 
