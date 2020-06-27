@@ -30,7 +30,12 @@ class PathfindingVisualizer extends React.Component {
       dijkstra: false,
       dfs: false,
       bfs: false,
-      a_star: false
+      a_star: false,
+      average : true,
+      slow : false,
+      fast : false,
+      speed: 25,
+      progress: true
     };
   }
 
@@ -50,12 +55,14 @@ class PathfindingVisualizer extends React.Component {
           row.push(createNode(rows, cols, false, true));
         }
         else {
+          if (document.getElementById(`node-${rows}-${cols}`)) {
+            document.getElementById(`node-${rows}-${cols}`).className="node"
+          }
           row.push(createNode(rows, cols, false, false));
         }
       }
       grid.push(row);
     }
-    console.log(grid)
     this.setState({ grid: grid });
   }
 
@@ -78,22 +85,46 @@ class PathfindingVisualizer extends React.Component {
     }
   }
 
+  chooseSpeed(speed) {
+    if (speed === "average") {
+      document.getElementById("speedInfo").innerHTML = "Speed : Average"
+      this.setState({average : true, fast : false, slow : false, speed : 25})
+    }
+    else if (speed === "fast") {
+      document.getElementById("speedInfo").innerHTML = "Speed : Fast"
+      this.setState({average : false, fast : true, slow : false, speed : 5})
+    }
+    else if (speed === "slow") {
+      document.getElementById("speedInfo").innerHTML = "Speed : Slow"
+      this.setState({average : false, fast : false, slow : true, speed : 50})
+    }
+  }
+
   visualizeAlgo() {
-    if (this.state.dijkstra === true) {
-      this.visualizeDijkstras()
+    if (!this.state.progress) {
+      alert("Visualization in progress")
+      return
     }
-    else if (this.state.a_star === true) {
-      console.log("a_star")
-    }
-    else if (this.state.dfs === true) {
-      console.log("dfs")
-    }
-    else if (this.state.bfs === true) {
-      console.log("bfs")
-    }
-    else {
-      alert("Choose an Algorithm")
-    }
+    this.initializeGrid()
+    this.setState({
+      progress: false
+    }, () => {
+      if (this.state.dijkstra === true) {
+        this.visualizeDijkstras()
+      }
+      else if (this.state.a_star === true) {
+        console.log("a_star")
+      }
+      else if (this.state.dfs === true) {
+        console.log("dfs")
+      }
+      else if (this.state.bfs === true) {
+        console.log("bfs")
+      }
+      else {
+        alert("Choose an Algorithm")
+      }
+    });
   }
 
   visualizeDijkstras() {
@@ -111,18 +142,13 @@ class PathfindingVisualizer extends React.Component {
       if (i === nodeOrder.length-1) {
         setTimeout(() => {
           this.animatePath(this.getPath(nodeOrder));
-        }, 10 * i);
+        }, this.state.speed * i);
         return;
       }
       setTimeout(() => {
         const node = nodeOrder[i];
-        // const newGrid = this.state.grid.slice();
-        // newGrid[node.row][node.col].isVisited = true;
-        // this.setState({ grid: newGrid });
-        // var id = "node-"+node.row+"-"+node.col
-        // console.log(`node-${node.row}-${node.col}`)
         document.getElementById(`node-${node.row}-${node.col}`).className="node node-visited"
-      }, 10 * i);
+      }, this.state.speed * i);
     }
   };
 
@@ -140,7 +166,11 @@ class PathfindingVisualizer extends React.Component {
   }
 
   animatePath = (pathOrder) => {
-    for(let i = 0; i < pathOrder.length; i++) {
+    for(let i = 0; i <= pathOrder.length; i++) {
+      if (i === pathOrder.length) {
+        this.setState({progress: true})
+        return
+      }
       setTimeout(() => {
         const node = pathOrder[pathOrder.length-1-i]
         document.getElementById(`node-${node.row}-${node.col}`).className="node node-path"
@@ -193,11 +223,17 @@ class PathfindingVisualizer extends React.Component {
   }
 
   clearNodes() {
-    window.location.reload()
+    this.setState({
+      start_row : Math.floor((window.innerHeight)/34/2),
+      start_col : Math.floor((window.innerWidth)/25/4),
+      finish_row : Math.floor((window.innerHeight)/34/2),
+      finish_col : Math.floor((window.innerWidth)/25/4*3),
+    }, () => {
+      this.initializeGrid();
+    })
   }
 
   render() {
-    console.log("render")
     return (
       <>
       <Navbar bg="light">
@@ -211,13 +247,14 @@ class PathfindingVisualizer extends React.Component {
               <NavDropdown.Item onClick={() => this.chooseAlgo("dfs")}>Depth First Search</NavDropdown.Item>
               <NavDropdown.Item onClick={() => this.chooseAlgo("bfs")}>Breadth First Search</NavDropdown.Item>
             </NavDropdown>
-            <NavDropdown title="Speed" id="basic-nav-dropdown">
-              <NavDropdown.Item>Slow</NavDropdown.Item>
-              <NavDropdown.Item>Medium</NavDropdown.Item>
-              <NavDropdown.Item>Fast</NavDropdown.Item>
+            <NavDropdown title="Speed">
+              <NavDropdown.Item onClick={() => this.chooseSpeed("slow")}>Slow</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => this.chooseSpeed("average")}>Average</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => this.chooseSpeed("fast")}>Fast</NavDropdown.Item>
             </NavDropdown>
             <Nav.Link onClick={() => this.clearNodes()}>Clear Nodes</Nav.Link>      
             <Button id="visualizeButton" onClick={() => this.visualizeAlgo()} variant="outline-success">Choose Algorithm</Button>{' '}
+            <Nav.Link id="speedInfo">Speed : Average</Nav.Link>      
           </Nav>
         </Navbar.Collapse>
       </Navbar>
