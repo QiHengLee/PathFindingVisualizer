@@ -33,7 +33,7 @@ class Node extends React.Component {
       : isVisited
       ? "node-visited"
       : "";
-
+    
     return (
       <div
         id={`node-${row}-${col}`}

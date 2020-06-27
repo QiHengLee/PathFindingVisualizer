@@ -27,6 +27,10 @@ class PathfindingVisualizer extends React.Component {
       finish_col : Math.floor((window.innerWidth)/25/4*3),
       width: Math.floor((window.innerWidth)/25),
       height: Math.floor((window.innerHeight)/34),
+      dijkstra: false,
+      dfs: false,
+      bfs: false,
+      a_star: false
     };
   }
 
@@ -36,7 +40,6 @@ class PathfindingVisualizer extends React.Component {
 
   initializeGrid() {
     const grid = [];
-
     for (var rows = 0; rows < this.state.height; rows++) {
       const row = [];
       for (var cols = 0; cols < this.state.width; cols++) {
@@ -52,7 +55,45 @@ class PathfindingVisualizer extends React.Component {
       }
       grid.push(row);
     }
+    console.log(grid)
     this.setState({ grid: grid });
+  }
+
+  chooseAlgo(algo) {
+    if (algo === "dfs") {
+      document.getElementById("visualizeButton").innerHTML = "Visualize Depth First Search"
+      this.setState({dfs:true, bfs: false, dijkstra: false, a_star: false})
+    }
+    if (algo === "bfs") {
+      document.getElementById("visualizeButton").innerHTML = "Visualize Breadth First Search"
+      this.setState({dfs:false, bfs: true, dijkstra: false, a_star: false})
+    }
+    if (algo === "a_star") {
+      document.getElementById("visualizeButton").innerHTML = "Visualize A*"
+      this.setState({dfs:false, bfs: false, dijkstra: false, a_star: true})
+    }
+    if (algo === "dijkstra") {
+      document.getElementById("visualizeButton").innerHTML = "Visualize Dijkstra"
+      this.setState({dfs:false, bfs: false, dijkstra: true, a_star: false})
+    }
+  }
+
+  visualizeAlgo() {
+    if (this.state.dijkstra === true) {
+      this.visualizeDijkstras()
+    }
+    else if (this.state.a_star === true) {
+      console.log("a_star")
+    }
+    else if (this.state.dfs === true) {
+      console.log("dfs")
+    }
+    else if (this.state.bfs === true) {
+      console.log("bfs")
+    }
+    else {
+      alert("Choose an Algorithm")
+    }
   }
 
   visualizeDijkstras() {
@@ -151,7 +192,12 @@ class PathfindingVisualizer extends React.Component {
     }
   }
 
+  clearNodes() {
+    window.location.reload()
+  }
+
   render() {
+    console.log("render")
     return (
       <>
       <Navbar bg="light">
@@ -160,22 +206,19 @@ class PathfindingVisualizer extends React.Component {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
             <NavDropdown title="Algorithms" id="basic-nav-dropdown">
-              <NavDropdown.Item>Dijkstra's Algorithm</NavDropdown.Item>
-              <NavDropdown.Item>A* Algorithm</NavDropdown.Item>
-              <NavDropdown.Item>Depth First Search</NavDropdown.Item>
-              <NavDropdown.Item>Breadth First Search</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => this.chooseAlgo("dijkstra")}>Dijkstra's Algorithm</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => this.chooseAlgo("a_star")}>A* Algorithm</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => this.chooseAlgo("dfs")}>Depth First Search</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => this.chooseAlgo("bfs")}>Breadth First Search</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Speed" id="basic-nav-dropdown">
               <NavDropdown.Item>Slow</NavDropdown.Item>
               <NavDropdown.Item>Medium</NavDropdown.Item>
               <NavDropdown.Item>Fast</NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link>Clear Nodes</Nav.Link>      
-            <Button onClick={() => this.visualizeDijkstras()} variant="outline-success">Visualize Algorithm</Button>{' '}
+            <Nav.Link onClick={() => this.clearNodes()}>Clear Nodes</Nav.Link>      
+            <Button id="visualizeButton" onClick={() => this.visualizeAlgo()} variant="outline-success">Choose Algorithm</Button>{' '}
           </Nav>
-          {/* <Nav className="mr-auto">
-          
-          </Nav> */}
         </Navbar.Collapse>
       </Navbar>
       <div className="grid">
@@ -237,10 +280,5 @@ function wallToggled(grid, row, col) {
   grid[row][col].isWall = !val;
   return grid;
 }
-
-// function startToggled(grid, row, col) {
-//   grid[row][col].isStart = false;
-//   return grid;
-// }
 
 export default PathfindingVisualizer;
