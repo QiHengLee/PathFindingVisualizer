@@ -6,6 +6,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import Button from 'react-bootstrap/Button'
 import NavDropdown from 'react-bootstrap/NavDropdown'
+import Modal from 'react-bootstrap/Modal'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class PathfindingVisualizer extends React.Component {
@@ -30,7 +31,9 @@ class PathfindingVisualizer extends React.Component {
       slow : false,
       fast : false,
       speed: 25,
-      progress: true
+      progress: true,
+      alertChooseAlgo: false,
+      alertVisualProgress: false
     };
   }
 
@@ -107,7 +110,7 @@ class PathfindingVisualizer extends React.Component {
 
   visualizeAlgo() {
     if (!this.state.progress) {
-      alert("Visualization in progress")
+      this.setState({alertVisualProgress: true})
       return
     }
     this.initializeGrid(false)
@@ -127,9 +130,10 @@ class PathfindingVisualizer extends React.Component {
         console.log("bfs")
       }
       else {
-        alert("Choose an Algorithm")
+        this.setState({alertChooseAlgo: true, progress: true})
       }
     });
+    
   }
 
   visualizeDijkstras() {
@@ -173,7 +177,9 @@ class PathfindingVisualizer extends React.Component {
   animatePath = (pathOrder) => {
     for(let i = 0; i <= pathOrder.length; i++) {
       if (i === pathOrder.length) {
-        this.setState({progress: true})
+        setTimeout(() => {
+          this.setState({progress: true})  
+        }, 50 * i);
         return
       }
       setTimeout(() => {
@@ -229,7 +235,7 @@ class PathfindingVisualizer extends React.Component {
 
   clearNodes() {
     if (!this.state.progress) {
-      alert("Visualization in progress")
+      this.setState({alertVisualProgress: true})
       return
     }
     this.setState({
@@ -243,8 +249,25 @@ class PathfindingVisualizer extends React.Component {
   }
 
   render() {
+    console.log(this.state.alertChooseAlgo)
     return (
       <>
+      <Modal show={this.state.alertChooseAlgo} onHide={() => {this.setState({alertChooseAlgo: false})}} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Alert</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Please choose an algorithm to visualize</Modal.Body>
+        <Modal.Footer>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={this.state.alertVisualProgress} onHide={() => {this.setState({alertVisualProgress: false})}} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Alert</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Visualization is in progress</Modal.Body>
+        <Modal.Footer>
+        </Modal.Footer>
+      </Modal>
       <Navbar id="navbar" bg="light">
           <Navbar.Brand>Pathfinding Visualizer</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
