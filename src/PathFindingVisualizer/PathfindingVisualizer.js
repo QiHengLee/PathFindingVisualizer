@@ -228,6 +228,10 @@ class PathfindingVisualizer extends React.Component {
   }
 
   clearNodes() {
+    if (!this.state.progress) {
+      alert("Visualization in progress")
+      return
+    }
     this.setState({
       start_row : Math.floor((window.innerHeight)/34/2),
       start_col : Math.floor((window.innerWidth)/25/4),
