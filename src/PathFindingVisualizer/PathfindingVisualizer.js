@@ -1,6 +1,7 @@
 import React from "react";
 import Node from "./Node/Node";
 import { dijkstras } from "../algorithms/dijkstra";
+import { bfs } from "../algorithms/bfs";
 import "./PathfindingVisualizer.css";
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
@@ -127,7 +128,7 @@ class PathfindingVisualizer extends React.Component {
         console.log("dfs")
       }
       else if (this.state.bfs === true) {
-        console.log("bfs")
+        this.visualizeBFS()
       }
       else {
         this.setState({alertChooseAlgo: true, progress: true})
@@ -139,6 +140,16 @@ class PathfindingVisualizer extends React.Component {
   visualizeDijkstras() {
     const { grid } = this.state;
     const nodeOrder = dijkstras(
+      grid,
+      grid[this.state.start_row][this.state.start_col],
+      grid[this.state.finish_row][this.state.finish_col]
+    );
+    this.animateMap(nodeOrder);
+  }
+
+  visualizeBFS() {
+    const { grid } = this.state;
+    const nodeOrder = bfs(
       grid,
       grid[this.state.start_row][this.state.start_col],
       grid[this.state.finish_row][this.state.finish_col]
@@ -249,7 +260,6 @@ class PathfindingVisualizer extends React.Component {
   }
 
   render() {
-    console.log(this.state.alertChooseAlgo)
     return (
       <>
       <Modal show={this.state.alertChooseAlgo} onHide={() => {this.setState({alertChooseAlgo: false})}} animation={false}>
