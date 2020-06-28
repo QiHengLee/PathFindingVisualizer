@@ -8,11 +8,6 @@ import Button from 'react-bootstrap/Button'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// const START_ROW = Math.floor((window.innerHeight)/34/2);
-// const START_COL = Math.floor((window.innerWidth)/25/4);
-// const FINISH_ROW = Math.floor((window.innerHeight)/34/2);
-// const FINISH_COL = Math.floor((window.innerWidth)/25/4*3);
-
 class PathfindingVisualizer extends React.Component {
   constructor(props) {
     super(props);
@@ -26,7 +21,7 @@ class PathfindingVisualizer extends React.Component {
       finish_row : Math.floor((window.innerHeight)/34/2),
       finish_col : Math.floor((window.innerWidth)/25/4*3),
       width: Math.floor((window.innerWidth)/25),
-      height: Math.floor((window.innerHeight)/34),
+      height: Math.floor((window.innerHeight)/36),
       dijkstra: false,
       dfs: false,
       bfs: false,
