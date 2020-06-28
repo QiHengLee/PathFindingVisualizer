@@ -14,7 +14,6 @@
 }
 
 .node-visited {
-  /* background-color: green; */
   animation-name: visitedAnimation;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
@@ -33,17 +32,20 @@
   }
 
   50% {
-    background-color: rgba(17, 104, 217, 0.75);
+    background-color: rgba(232, 255, 179, 0.75);
+    /* background-color: blue; */
   }
 
   75% {
     transform: scale(1.2);
-    background-color: rgba(0, 217, 159, 0.75);
+    background-color: rgba(30, 255, 0, 0.75);
+    /* background-color: #ff0000; */
   }
 
   100% {
     transform: scale(1);
-    background-color: rgba(0, 190, 218, 0.75);
+    background-color: rgba(0, 204, 61, 0.75);
+    /* background-attachment: #cc0000; */
   }
 }
 
