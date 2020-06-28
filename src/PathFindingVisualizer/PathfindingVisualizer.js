@@ -2,6 +2,7 @@ import React from "react";
 import Node from "./Node/Node";
 import { dijkstras } from "../algorithms/dijkstra";
 import { bfs } from "../algorithms/bfs";
+import { dfs } from "../algorithms/dfs";
 import "./PathfindingVisualizer.css";
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
@@ -125,7 +126,7 @@ class PathfindingVisualizer extends React.Component {
         console.log("a_star")
       }
       else if (this.state.dfs === true) {
-        console.log("dfs")
+        this.visualizeDFS()
       }
       else if (this.state.bfs === true) {
         this.visualizeBFS()
@@ -150,6 +151,16 @@ class PathfindingVisualizer extends React.Component {
   visualizeBFS() {
     const { grid } = this.state;
     const nodeOrder = bfs(
+      grid,
+      grid[this.state.start_row][this.state.start_col],
+      grid[this.state.finish_row][this.state.finish_col]
+    );
+    this.animateMap(nodeOrder);
+  }
+
+  visualizeDFS() {
+    const { grid } = this.state;
+    const nodeOrder = dfs(
       grid,
       grid[this.state.start_row][this.state.start_col],
       grid[this.state.finish_row][this.state.finish_col]
@@ -190,13 +201,13 @@ class PathfindingVisualizer extends React.Component {
       if (i === pathOrder.length) {
         setTimeout(() => {
           this.setState({progress: true})  
-        }, 50 * i);
+        }, 30 * i);
         return
       }
       setTimeout(() => {
         const node = pathOrder[pathOrder.length-1-i]
         document.getElementById(`node-${node.row}-${node.col}`).className="node node-path"
-      }, 50 * i);
+      }, 30 * i);
     }
   };
 
