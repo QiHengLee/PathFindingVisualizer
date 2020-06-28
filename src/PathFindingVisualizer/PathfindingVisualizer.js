@@ -246,27 +246,27 @@ class PathfindingVisualizer extends React.Component {
   render() {
     return (
       <>
-      <Navbar bg="light">
-        <Navbar.Brand>Pathfinding Visualizer</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <NavDropdown title="Algorithms" id="basic-nav-dropdown">
-              <NavDropdown.Item onClick={() => this.chooseAlgo("dijkstra")}>Dijkstra's Algorithm</NavDropdown.Item>
-              <NavDropdown.Item onClick={() => this.chooseAlgo("a_star")}>A* Algorithm</NavDropdown.Item>
-              <NavDropdown.Item onClick={() => this.chooseAlgo("dfs")}>Depth First Search</NavDropdown.Item>
-              <NavDropdown.Item onClick={() => this.chooseAlgo("bfs")}>Breadth First Search</NavDropdown.Item>
-            </NavDropdown>
-            <NavDropdown title="Speed">
-              <NavDropdown.Item onClick={() => this.chooseSpeed("slow")}>Slow</NavDropdown.Item>
-              <NavDropdown.Item onClick={() => this.chooseSpeed("average")}>Average</NavDropdown.Item>
-              <NavDropdown.Item onClick={() => this.chooseSpeed("fast")}>Fast</NavDropdown.Item>
-            </NavDropdown>
-            <Nav.Link onClick={() => this.clearNodes()}>Clear Nodes</Nav.Link>      
-            <Button id="visualizeButton" onClick={() => this.visualizeAlgo()} variant="outline-success">Choose Algorithm</Button>{' '}
-            <Nav.Link id="speedInfo">Speed : Average</Nav.Link>      
-          </Nav>
-        </Navbar.Collapse>
+      <Navbar id="navbar" bg="light">
+          <Navbar.Brand>Pathfinding Visualizer</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+              <NavDropdown title="Algorithms" id="basic-nav-dropdown">
+                <NavDropdown.Item onClick={() => this.chooseAlgo("dijkstra")}>Dijkstra's Algorithm</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.chooseAlgo("a_star")}>A* Algorithm</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.chooseAlgo("dfs")}>Depth First Search</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.chooseAlgo("bfs")}>Breadth First Search</NavDropdown.Item>
+              </NavDropdown>
+              <NavDropdown title="Speed">
+                <NavDropdown.Item onClick={() => this.chooseSpeed("slow")}>Slow</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.chooseSpeed("average")}>Average</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => this.chooseSpeed("fast")}>Fast</NavDropdown.Item>
+              </NavDropdown>
+              <Nav.Link onClick={() => this.clearNodes()}>Clear Nodes</Nav.Link>      
+              <Button id="visualizeButton" onClick={() => this.visualizeAlgo()} variant="outline-success">Choose Algorithm</Button>{' '}
+              <Nav.Link id="speedInfo">Speed : Average</Nav.Link>      
+            </Nav>
+          </Navbar.Collapse>       
       </Navbar>
       <div className="grid">
         {this.state.grid.map((row, rowIdx) => {
