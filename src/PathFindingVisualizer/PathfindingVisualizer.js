@@ -21,7 +21,7 @@ class PathfindingVisualizer extends React.Component {
       finish_row : Math.floor((window.innerHeight)/34/2),
       finish_col : Math.floor((window.innerWidth)/25/4*3),
       width: Math.floor((window.innerWidth)/25),
-      height: Math.floor((window.innerHeight)/36),
+      height: Math.floor((window.innerHeight)/34),
       dijkstra: false,
       dfs: false,
       bfs: false,
