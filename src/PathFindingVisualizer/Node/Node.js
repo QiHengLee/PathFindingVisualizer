@@ -14,8 +14,6 @@ class Node extends React.Component {
       col,
       isStart,
       isFinish,
-      isVisited,
-      isPath,
       isWall,
       onMouseDown,
       onMouseUp,
@@ -28,10 +26,6 @@ class Node extends React.Component {
       ? "node-start"
       : isWall
       ? "node-wall"
-      : isPath
-      ? "node-path"
-      : isVisited
-      ? "node-visited"
       : "";
     return (
       <div
