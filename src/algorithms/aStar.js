@@ -1,5 +1,6 @@
 export const aStar = (grid, startNode, finishNode) => {
     var nodeOrder = [];
+    //try
   
     return nodeOrder;
   };
