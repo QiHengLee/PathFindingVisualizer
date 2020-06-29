@@ -1,7 +1,7 @@
 export const aStar = (grid, startNode, finishNode) => {
     var nodeOrder = [];
     //try
-  
+    //try2
     return nodeOrder;
   };
   
