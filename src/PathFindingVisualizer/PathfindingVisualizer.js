@@ -3,6 +3,7 @@ import Node from "./Node/Node";
 import { dijkstras } from "../algorithms/dijkstra";
 import { bfs } from "../algorithms/bfs";
 import { dfs } from "../algorithms/dfs";
+import { aStar } from "../algorithms/aStar";
 import "./PathfindingVisualizer.css";
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
@@ -123,7 +124,7 @@ class PathfindingVisualizer extends React.Component {
         this.visualizeDijkstras()
       }
       else if (this.state.a_star === true) {
-        console.log("a_star")
+        this.visualizeAStar()
       }
       else if (this.state.dfs === true) {
         this.visualizeDFS()
@@ -165,6 +166,17 @@ class PathfindingVisualizer extends React.Component {
       grid[this.state.start_row][this.state.start_col],
       grid[this.state.finish_row][this.state.finish_col]
     );
+    this.animateMap(nodeOrder);
+  }
+
+  visualizeAStar() {
+    const { grid } = this.state;
+    const nodeOrder = aStar(
+      grid,
+      grid[this.state.start_row][this.state.start_col],
+      grid[this.state.finish_row][this.state.finish_col]
+    );
+    // console.log(nodeOrder)
     this.animateMap(nodeOrder);
   }
 
@@ -362,6 +374,9 @@ const createNode = (row, col, isStart, isFinish) => {
     previousNode: null,
     minHeapPos: 0,
     isPath: false,
+    f: Infinity,
+    g: Infinity,
+    h: Infinity
   };
 };
 
